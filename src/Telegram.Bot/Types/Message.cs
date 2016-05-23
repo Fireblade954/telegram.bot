@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
-using Telegram.Bot.Helpers;
+using Telegram.Bot.Converters;
+using Telegram.Bot.Types.Enums;
 
 namespace Telegram.Bot.Types
 {
@@ -42,6 +45,12 @@ namespace Telegram.Bot.Types
         public User ForwardFrom { get; internal set; }
 
         /// <summary>
+        /// Optional. For messages forwarded from a channel, information about the original channel
+        /// </summary>
+        [JsonProperty("forward_from_chat", Required = Required.Default)]
+        public Chat ForwardFromChat { get; internal set; }
+
+        /// <summary>
         /// Optional. For forwarded messages, date the original message was sent in Unix time
         /// </summary>
         [JsonProperty("forward_date", Required = Required.Default)]
@@ -55,6 +64,13 @@ namespace Telegram.Bot.Types
         public Message ReplyToMessage { get; internal set; }
 
         /// <summary>
+        /// Optional. Date the message was last edited in Unix time
+        /// </summary>
+        [JsonProperty("edit_date", Required = Required.Default)]
+        [JsonConverter(typeof(UnixDateTimeConverter))]
+        public DateTime EditDate { get; internal set; }
+
+        /// <summary>
         /// Optional. For text messages, the actual UTF-8 text of the message
         /// </summary>
         [JsonProperty("text", Required = Required.Default)]
@@ -64,7 +80,10 @@ namespace Telegram.Bot.Types
         /// Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
         /// </summary>
         [JsonProperty("entities", Required = Required.Default)]
-        public MessageEntity[] Entities { get; internal set; }
+        public List<MessageEntity> Entities { get; internal set; } = new List<MessageEntity>();
+
+        [JsonIgnore]
+        public List<string> EntityValues => Entities.ToList().Select(entity => Text.Substring(entity.Offset, entity.Length)).ToList();
 
         /// <summary>
         /// Optional. Message is an audio file, information about the file

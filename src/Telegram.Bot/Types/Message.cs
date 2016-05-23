@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Telegram.Bot.Helpers;
+using Telegram.Bot.Converters;
+using Telegram.Bot.Types.Enums;
 
 namespace Telegram.Bot.Types
 {
@@ -61,6 +62,13 @@ namespace Telegram.Bot.Types
         /// </summary>
         [JsonProperty("reply_to_message", Required = Required.Default)]
         public Message ReplyToMessage { get; internal set; }
+
+        /// <summary>
+        /// Optional. Date the message was last edited in Unix time
+        /// </summary>
+        [JsonProperty("edit_date", Required = Required.Default)]
+        [JsonConverter(typeof(UnixDateTimeConverter))]
+        public DateTime EditDate { get; internal set; }
 
         /// <summary>
         /// Optional. For text messages, the actual UTF-8 text of the message

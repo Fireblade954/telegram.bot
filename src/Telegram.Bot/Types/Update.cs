@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Telegram.Bot.Types.Enums;
 
 namespace Telegram.Bot.Types
 {
@@ -17,14 +18,20 @@ namespace Telegram.Bot.Types
         /// This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to
         /// restore the correct update sequence, should they get out of order.
         /// </summary>
-        [JsonProperty(PropertyName = "update_id", Required = Required.Always)]
+        [JsonProperty("update_id", Required = Required.Always)]
         public int Id { get; internal set; }
 
         /// <summary>
         /// Optional. New incoming message of any kind — text, photo, sticker, etc.
         /// </summary>
-        [JsonProperty(PropertyName = "message", Required = Required.Default)]
+        [JsonProperty("message", Required = Required.Default)]
         public Message Message { get; internal set; }
+
+        /// <summary>
+        /// Optional. New version of a message that is known to the bot and was edited
+        /// </summary>
+        [JsonProperty("edited_message", Required = Required.Default)]
+        public Message EditedMessage { get; internal set; }
 
         /// <summary>
         /// Optional. New incoming inline query
@@ -42,7 +49,7 @@ namespace Telegram.Bot.Types
         /// Optional. New incoming callback query
         /// </summary>
         [JsonProperty("callback_query", Required = Required.Default)]
-        public CallbackQuery CallbackQuery { get; set; }
+        public CallbackQuery CallbackQuery { get; internal set; }
 
         [JsonIgnore]
         public UpdateType Type
@@ -53,6 +60,7 @@ namespace Telegram.Bot.Types
                 if (InlineQuery != null)        return UpdateType.InlineQueryUpdate;
                 if (ChosenInlineResult != null) return UpdateType.ChosenInlineResultUpdate;
                 if (CallbackQuery != null)      return UpdateType.CallbackQueryUpdate;
+                if (EditedMessage != null)      return UpdateType.EditedMessage;
 
                 throw new ArgumentOutOfRangeException();
             }
